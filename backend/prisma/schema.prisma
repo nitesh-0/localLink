@@ -1,0 +1,92 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id Int @id @default(autoincrement())
+  email String @unique
+  password String
+  imageUrl String?
+  location String?
+  name String?
+  businessName String?
+  category String?
+  role Role
+  isVerified Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  products Product[]
+  EmailVerificationToken EmailVerificationToken[]
+
+  // Relations for chat
+  userConversations Conversation[] @relation("UserConversations")   // conversations where this user is the 'user'
+  businessConversations Conversation[] @relation("BusinessConversations") // conversations where this user is the 'business'
+  sentMessages Message[] @relation("SenderMessages")               // messages sent by this user
+}
+
+
+model EmailVerificationToken {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model Product {
+  id Int @id @default(autoincrement())
+  name String
+  price Float
+  caption String?
+  available Boolean @default(true)
+  imageUrl String[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId Int
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum Role {
+  USER 
+  BUSINESS 
+}
+
+model Conversation {
+  id        Int      @id @default(autoincrement())
+  userId    Int      // the user (role = USER)
+  businessId Int     // the business (role = BUSINESS)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  messages  Message[]
+
+  user      User @relation("UserConversations", fields: [userId], references: [id])
+  business  User @relation("BusinessConversations", fields: [businessId], references: [id])
+
+  @@unique([userId, businessId]) // ensures one chat per user-business pair
+}
+
+
+model Message {
+  id             Int       @id @default(autoincrement())
+  conversationId Int
+  senderId       Int       // sender can be either user or business
+  text           String
+  createdAt      DateTime  @default(now())
+
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender         User         @relation("SenderMessages", fields: [senderId], references: [id])
+}
+
