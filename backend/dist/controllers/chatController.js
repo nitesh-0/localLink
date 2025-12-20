@@ -34,12 +34,15 @@ router.post("/start", middleware_1.authMiddleware, async (req, res) => {
 });
 router.get("/conversations", middleware_1.authMiddleware, async (req, res) => {
     try {
-        const userIdentity = req.userId || "";
-        const userId = parseInt(userIdentity);
-        const userRole = req.role || "";
-        console.log("FETCHING CONVERSATIONS FOR ->", { userId, userRole });
+        const userId = Number(req.userId);
+        console.log("FETCHING CONVERSATIONS FOR USER:", userId);
         const conversations = await prisma.conversation.findMany({
-            where: userRole === "USER" ? { userId } : { businessId: userId },
+            where: {
+                OR: [
+                    { userId },
+                    { businessId: userId }
+                ],
+            },
             include: {
                 user: true,
                 business: true,
@@ -50,7 +53,6 @@ router.get("/conversations", middleware_1.authMiddleware, async (req, res) => {
             },
             orderBy: { updatedAt: "desc" },
         });
-        console.log("CONVERSATIONS FOUND:", conversations);
         res.json(conversations);
     }
     catch (err) {

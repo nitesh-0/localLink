@@ -47,14 +47,17 @@ router.post("/start", authMiddleware, async (req: Request, res: Response)=> {
 
 router.get("/conversations", authMiddleware, async (req: Request, res: Response) => {
   try {
-    const userIdentity = req.userId || "";  
-    const userId = parseInt(userIdentity);
-    const userRole = req.role || "";
+    const userId = Number(req.userId);
 
-    console.log("FETCHING CONVERSATIONS FOR ->", { userId, userRole });
+    console.log("FETCHING CONVERSATIONS FOR USER:", userId);
 
     const conversations = await prisma.conversation.findMany({
-      where: userRole === "USER" ? { userId } : { businessId: userId },
+      where: {
+        OR: [
+          { userId },
+          { businessId: userId }
+        ],
+      },
       include: {
         user: true,
         business: true,
@@ -66,16 +69,13 @@ router.get("/conversations", authMiddleware, async (req: Request, res: Response)
       orderBy: { updatedAt: "desc" },
     });
 
-    console.log("CONVERSATIONS FOUND:", conversations);
-
     res.json(conversations);
-  } 
-  
-  catch (err) {
+  } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to fetch conversations" });
   }
 });
+
 
 
  router.get("/:conversationId/messages", authMiddleware, async (req: Request, res: Response) => {

@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react"
 import Button from "./Button"
 import axios from "axios"
+import { useNavigate } from "react-router-dom"
 
 
 function ProductCard({products, setProducts} : {products: any, setProducts: any}){
     const [isExpanded, setIsexpanded] = useState(false)
+
+    const navigate = useNavigate()
     
     
     useEffect(() => {
@@ -27,10 +30,7 @@ function ProductCard({products, setProducts} : {products: any, setProducts: any}
     function handleMapButtonClick(){
 
     }
-
-    function handleChatButtonClick(){
-
-    }
+    
     
     return <div  className="grid grid-cols-2 pt-[100px] gap-8 mt-8 mb-8 ml-[145px]">
         {products.map((product : any) => {
@@ -84,7 +84,9 @@ function ProductCard({products, setProducts} : {products: any, setProducts: any}
                     </p> 
                     <div className="flex justify-between mt-4 mx-4">
                         <Button onClick={handleMapButtonClick} width="50" content="View Shop on Map"/>
-                        <Button onClick={handleChatButtonClick} width="50" content="Talk to Shopkeeper"/>
+                        <Button onClick={() => {
+                            navigate("/chat")
+                        }} width="50" content="Talk to Shopkeeper"/>
                     </div>
                 </div>
             </div>
