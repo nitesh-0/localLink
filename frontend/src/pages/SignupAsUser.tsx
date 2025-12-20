@@ -49,6 +49,9 @@ function SignupAsUser(){
             setImageUrl(response.data.newUser.imageUrl)
             
             localStorage.setItem("token", response.data.token);
+            localStorage.setItem("userId", response.data.newUser.id);
+            localStorage.setItem("userRole", response.data.newUser.role);
+
             navigate("/verify-pending");
         } catch (err: any) {
             console.error("Signup failed:", err.response?.data || err.message);

@@ -35,6 +35,9 @@ function Signin(){
             
 
             localStorage.setItem("token", response.data.token);
+            localStorage.setItem("userId", response.data.isValid.id);
+            localStorage.setItem("userRole", response.data.isValid.role);
+
             if(response.data.isValid.role == "USER"){
                 navigate("/user-dashboard");
             } else {

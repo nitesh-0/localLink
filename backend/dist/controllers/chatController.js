@@ -34,15 +34,12 @@ router.post("/start", middleware_1.authMiddleware, async (req, res) => {
 });
 router.get("/conversations", middleware_1.authMiddleware, async (req, res) => {
     try {
-        const userId = Number(req.userId);
-        console.log("FETCHING CONVERSATIONS FOR USER:", userId);
+        const userIdentity = req.userId || "";
+        const userId = parseInt(userIdentity);
+        const userRole = req.role || "";
+        console.log("FETCHING CONVERSATIONS FOR ->", { userId, userRole });
         const conversations = await prisma.conversation.findMany({
-            where: {
-                OR: [
-                    { userId },
-                    { businessId: userId }
-                ],
-            },
+            where: userRole === "USER" ? { userId: userId } : { businessId: userId },
             include: {
                 user: true,
                 business: true,
@@ -53,7 +50,12 @@ router.get("/conversations", middleware_1.authMiddleware, async (req, res) => {
             },
             orderBy: { updatedAt: "desc" },
         });
-        res.json(conversations);
+        console.log("CONVERSATIONS FOUND:", conversations);
+        console.log(userRole);
+        res.json({
+            conversations,
+            role: userRole
+        });
     }
     catch (err) {
         console.error(err);
@@ -61,6 +63,7 @@ router.get("/conversations", middleware_1.authMiddleware, async (req, res) => {
     }
 });
 router.get("/:conversationId/messages", middleware_1.authMiddleware, async (req, res) => {
+    console.log("loading message route got hit");
     try {
         const { conversationId } = req.params;
         const messages = await prisma.message.findMany({
@@ -68,6 +71,7 @@ router.get("/:conversationId/messages", middleware_1.authMiddleware, async (req,
             include: { sender: true },
             orderBy: { createdAt: "asc" },
         });
+        console.log(messages);
         res.json(messages);
     }
     catch (err) {
@@ -84,6 +88,9 @@ router.post("/:conversationId/messages", middleware_1.authMiddleware, async (req
         }
         const senderIdentity = req.userId || "";
         const senderId = parseInt(senderIdentity);
+        const senderRole = req.role || "";
+        console.log("senderId in new message route: ", senderId);
+        console.log("sender role in new message route: ", senderRole);
         // Verify conversation exists
         const conversation = await prisma.conversation.findUnique({
             where: { id: Number(conversationId) },
