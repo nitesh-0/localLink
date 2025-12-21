@@ -3,26 +3,28 @@ import { useEffect, useState } from "react";
 import { connectSocket, getSocket } from "../socket";
 import axios from "axios";
 import AppBar from "../components/AppBar";
+import { useParams} from "react-router-dom";
+
 
 /* ================= TYPES ================= */
 
-type User = {
+export type User = {
   name: string;
   role: string;
 };
 
-type Business = {
+export type Business = {
   businessName: string;
 };
 
-type Message = {
+export type Message = {
   id?: number;
   text: string;
   conversationId: number;
   sender: User;
 };
 
-type Conversation = {
+export type Conversation = {
   id: number;
   user?: User;
   business?: Business;
@@ -42,6 +44,11 @@ export default function ChatPage() {
   const token = localStorage.getItem("token") || "";
   const userId = Number(localStorage.getItem("userId"));
 
+  const {id} = useParams()
+  const autoConvId = id ? Number(id) : null;
+  console.log("conversation Id: ", id)
+
+
   /* ================= CONNECT SOCKET + LOAD CONVERSATIONS ================= */
 
   useEffect(() => {
@@ -57,8 +64,26 @@ export default function ChatPage() {
       })
       .then((res) => {
         // IMPORTANT: backend must return conversations array
-        setConversations(res.data.conversations);
+        const convs = res.data.conversations;
+        setConversations(convs);
         setRole(res.data.role);
+
+        // 🔥 AUTO SELECT CONVERSATION
+        if (autoConvId) {
+          const found = convs.find(
+            (c: Conversation) => c.id === autoConvId
+          );
+
+          console.log("found conversation: ", found)
+
+          if (found) {
+            setActiveConversation(found);
+            loadMessages(found.id);
+
+            const socket = getSocket();
+            socket.emit("join_conversation", found.id);
+          }
+        }
       })
       .catch((err) => {
         console.error("Failed to fetch conversations", err);
@@ -86,8 +111,7 @@ export default function ChatPage() {
   /* ================= LOAD MESSAGES ================= */
 
   const loadMessages = (conversationId: number) => {
-    axios
-      .get(`http://localhost:3000/api/v1/chat/${conversationId}/messages`, {
+    axios.get(`http://localhost:3000/api/v1/chat/${conversationId}/messages`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -124,36 +148,27 @@ export default function ChatPage() {
     setNewMessage("");
   };
 
-  /* ================= UI ================= */
 
   return (
   <div className="h-screen flex flex-col bg-[#F0F0F0]">
-    {/* APP BAR (fixed height, non-scrollable) */}
+    {/* APP BAR */}
     <div className="h-14 mb-6 shrink-0">
       <AppBar />
     </div>
 
-    {/* MAIN CHAT SECTION (fills remaining height) */}
+    {/* MAIN CHAT SECTION */}
     <div className="flex flex-1 overflow-hidden">
       
-      {/* LEFT PANEL (scrollable list only) */}
+      {/* LEFT PANEL */}
       <div className="w-[30%] border-r border-gray-300 flex flex-col">
         <h3 className="p-2.5 text-md shrink-0">Chats</h3>
 
         <div className="flex-1 overflow-y-auto">
           {conversations.map((c) => (
-            <div
-              key={c.id}
-              onClick={() => handleSelectConversation(c)}
-              className={`p-2.5 cursor-pointer border-b border-gray-300 ${
-                activeConversation?.id === c.id
-                  ? "bg-gray-300"
-                  : "bg-[#F0F0F0]"
-              }`}
-            >
-              {role === "USER"
-                ? c.business?.businessName
-                : c.user?.name}
+            <div key={c.id} onClick={() => handleSelectConversation(c)} className={`p-2.5 cursor-pointer border-b border-gray-300 ${
+                activeConversation?.id === c.id ? "bg-gray-300" : "bg-[#F0F0F0]"
+              }`}>
+              {role === "USER" ? c.business?.businessName : c.user?.name}
 
               <br />
               <small className="text-gray-500">
@@ -164,11 +179,11 @@ export default function ChatPage() {
         </div>
       </div>
 
-      {/* RIGHT PANEL (non-scrollable container) */}
+      {/* RIGHT PANEL */}
       <div className="w-[70%] p-2.5 flex flex-col">
         {activeConversation ? (
           <>
-            {/* Messages (scrollable only here) */}
+            {/* Messages  */}
             <div className="flex-1 overflow-y-auto bg-[#90AB8B] rounded-md p-3 mb-2.5 flex flex-col gap-2">
               {messages.map((m, index) => {
                 const isSentByMe = m.sender.id === userId;
@@ -220,4 +235,3 @@ export default function ChatPage() {
 );
 
 }
-

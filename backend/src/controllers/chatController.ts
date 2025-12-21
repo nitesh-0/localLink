@@ -36,7 +36,9 @@ router.post("/start", authMiddleware, async (req: Request, res: Response)=> {
       });
     }
 
-    res.json(conversation);
+    res.json({
+      conversation
+    });
   }
 
   catch (err) {

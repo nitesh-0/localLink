@@ -25,7 +25,9 @@ router.post("/start", middleware_1.authMiddleware, async (req, res) => {
                 data: { userId, businessId },
             });
         }
-        res.json(conversation);
+        res.json({
+            conversation
+        });
     }
     catch (err) {
         console.error(err);

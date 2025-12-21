@@ -4,10 +4,13 @@ import axios from "axios"
 import { useNavigate } from "react-router-dom"
 
 
+
+
 function ProductCard({products, setProducts} : {products: any, setProducts: any}){
     const [isExpanded, setIsexpanded] = useState(false)
 
     const navigate = useNavigate()
+    const token = localStorage.getItem("token")
     
     
     useEffect(() => {
@@ -29,6 +32,21 @@ function ProductCard({products, setProducts} : {products: any, setProducts: any}
 
     function handleMapButtonClick(){
 
+    }
+
+    async function handleChatButtonClick(productId: number){
+        const res = await axios.post("http://localhost:3000/api/v1/chat/start",
+            {
+                businessId: productId 
+            },
+            {
+                headers: {
+                Authorization: `Bearer ${token}`,
+                },
+            }
+            );
+            
+        navigate(`/chat/${res.data.conversation?.id}`)
     }
     
     
@@ -84,9 +102,7 @@ function ProductCard({products, setProducts} : {products: any, setProducts: any}
                     </p> 
                     <div className="flex justify-between mt-4 mx-4">
                         <Button onClick={handleMapButtonClick} width="50" content="View Shop on Map"/>
-                        <Button onClick={() => {
-                            navigate("/chat")
-                        }} width="50" content="Talk to Shopkeeper"/>
+                        <Button onClick={() => handleChatButtonClick(product.userId)} width="50" content="Talk to Shopkeeper"/>
                     </div>
                 </div>
             </div>

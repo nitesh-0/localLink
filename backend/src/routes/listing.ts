@@ -63,7 +63,15 @@ router.post("/create", authMiddleware, upload.array("images") , async (req, res)
 })
 
 router.get("/all", authMiddleware, async (req, res) => {
-    const allProducts = await prisma.product.findMany()
+    const allProducts = await prisma.product.findMany({
+        include:{
+            user: {
+                select: {
+                    id: true
+                }
+            }
+        }
+    })
 
     res.json({
         allProducts

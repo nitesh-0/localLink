@@ -58,7 +58,7 @@ function AppBar({setProducts} : {setProducts?: any}) {
           <SearchFilter setProducts={setProducts} />
         )}
 
-        {location.pathname === "/chat" && (
+        {location.pathname.startsWith("/chat")  && (
           <button
             onClick={() => {
               userRole === "USER" ? navigate("/user-dashboard") : navigate("/business-dashboard")
@@ -67,6 +67,7 @@ function AppBar({setProducts} : {setProducts?: any}) {
             Go to Dashboard
           </button>
         )}
+        
         
 
         <button onClick={() => {

@@ -34,6 +34,7 @@ function App() {
         <Route path="/new-product" element={<NewProduct/>} />
         <Route path="/new-product/:id" element={<NewProduct/>} />
         <Route path="/chat" element={<ChatPage/>} />
+        <Route path="/chat/:id" element={<ChatPage/>} />
       </Routes>
     </BrowserRouter>
 
