@@ -81,7 +81,9 @@ export default function ChatPage() {
             loadMessages(found.id);
 
             const socket = getSocket();
-            socket.emit("join_conversation", found.id);
+            if (socket) {
+              socket.emit("join_conversation", found.id);
+            }
           }
         }
       })
@@ -128,6 +130,7 @@ export default function ChatPage() {
 
     // Join socket room
     const socket = getSocket();
+    if (!socket) return;
     socket.emit("join_conversation", conv.id);
 
     setNotificationMap((prev) => {
@@ -143,6 +146,8 @@ export default function ChatPage() {
     if (!activeConversation || newMessage.trim() === "") return;
 
     const socket = getSocket();
+
+    if (!socket) return;
 
     socket.emit("send_message", {
       conversationId: activeConversation.id,

@@ -96,8 +96,8 @@ function NewProduct(){
                         }} label="Product Name" value={name} placeholder="Jacket, Cake, cement"/>
                     </div>
                     <div>
-                        <TextArea onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                            setCaption((e.target.value))
+                        <TextArea onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
+                            return setCaption((e.target.value))
                         }} label="Describe your Product" value={caption} placeholder="It's a beautiful warm jacket and confortable for men"/>
                     </div>
                     <div>
