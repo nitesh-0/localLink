@@ -11,7 +11,15 @@ dotenv.config();
 
 
 const app = express()
-app.use(cors())
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",          // local dev
+      "https://local-link.vercel.app" // production
+    ],
+    credentials: true,
+  })
+);
 app.use(express.json())
 const prisma = new PrismaClient()
 
@@ -31,8 +39,12 @@ app.get("/", (req, res) => {
 // ----------------------
 const io = new SocketIOServer(server, {
   cors: {
-    origin: "*",
+    origin: [
+      "http://localhost:5173",
+      "https://local-link.vercel.app"
+    ],
     methods: ["GET", "POST"],
+    credentials: true,
   },
 });
 
