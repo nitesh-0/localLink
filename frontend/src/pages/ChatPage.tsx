@@ -105,7 +105,7 @@ export default function ChatPage() {
     return () => {
       socket.off("new_message");
     };
-  }, []);
+  }, [activeConversation]);
 
  // LOAD MESSAGES
   const loadMessages = (conversationId: number) => {
