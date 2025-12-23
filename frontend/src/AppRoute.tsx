@@ -2,7 +2,7 @@ import { Route, Routes, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { useSetRecoilState } from "recoil";
 import { notificationMapState } from "./recoil/atoms";
-import { connectSocket } from "./socket"
+import { connectSocket } from "./socket";
 
 import Landing from "./pages/Landing";
 import Signin from "./pages/Signin";

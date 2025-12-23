@@ -9,9 +9,11 @@ import {  notificationMapState } from "../recoil/atoms";
 
 
 export type User = {
+  id: number;
   name: string;
   role: string;
 };
+
 
 export type Business = {
   businessName: string;

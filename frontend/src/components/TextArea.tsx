@@ -1,7 +1,7 @@
 import type { ChangeEvent } from "react";
 
 
-function TextArea({label, value, placeholder, onChange} : {label?: string, value?: string, placeholder: string, onChange : (e: ChangeEvent<HTMLInputElement>) => void }){
+function TextArea({label, value, placeholder, onChange} : {label?: string, value?: string, placeholder: string, onChange : (e: ChangeEvent<HTMLTextAreaElement>) => void }){
 
     return <div>
         

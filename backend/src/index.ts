@@ -6,6 +6,9 @@ import { Server as SocketIOServer } from "socket.io";
 import jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
 import {JWT_SECRET} from "./config"
+import dotenv from "dotenv";
+dotenv.config();
+
 
 const app = express()
 app.use(cors())
