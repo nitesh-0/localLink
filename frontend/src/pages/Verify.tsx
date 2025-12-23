@@ -17,7 +17,7 @@ export default function VerifyPage() {
 
     (async () => {
       try {
-        const response = await axios.post("http://localhost:3000/api/v1/user/verify",
+        const response = await axios.post("https://locallink-lg2y.onrender.com/api/v1/user/verify",
           { token,
             email
           }

@@ -57,7 +57,7 @@ export default function ChatPage() {
 
     // 2️⃣ Fetch conversations
     axios
-      .get("http://localhost:3000/api/v1/chat/conversations", {
+      .get("https://locallink-lg2y.onrender.com/api/v1/chat/conversations", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -113,7 +113,7 @@ export default function ChatPage() {
 
  // LOAD MESSAGES
   const loadMessages = (conversationId: number) => {
-    axios.get(`http://localhost:3000/api/v1/chat/${conversationId}/messages`, {
+    axios.get(`https://locallink-lg2y.onrender.com/api/v1/chat/${conversationId}/messages`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

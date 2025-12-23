@@ -16,7 +16,7 @@ export function useProduct({id} : {id: string}){
     const [product, setProduct] = useState<Product>()
 
     useEffect(() => {
-        axios.get(`http://localhost:3000/api/v1/listing/me?productId=${id}`, {
+        axios.get(`https://locallink-lg2y.onrender.com/api/v1/listing/me?productId=${id}`, {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`
             }

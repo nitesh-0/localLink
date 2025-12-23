@@ -49,7 +49,7 @@ function NewProduct(){
     try {
         if (id) {
             const response = await axios.put(
-                `http://localhost:3000/api/v1/listing/update/${id}`,
+                `https://locallink-lg2y.onrender.com/api/v1/listing/update/${id}`,
                 formData,
                 {
                     headers: {
@@ -61,7 +61,7 @@ function NewProduct(){
             console.log("update response:", response.data);
         } else {
             const response = await axios.post(
-                "http://localhost:3000/api/v1/listing/create",
+                "https://locallink-lg2y.onrender.com/api/v1/listing/create",
                 formData,
                 {
                     headers: {

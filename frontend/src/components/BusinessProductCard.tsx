@@ -19,7 +19,7 @@ function BusinessProductCard({products, setProducts} : {products: any, setProduc
     console.log("before click current: ", current)
     try {
       const response = await axios.put(
-        `http://localhost:3000/api/v1/listing/update/basic/${id}`,
+        `https://locallink-lg2y.onrender.com/api/v1/listing/update/basic/${id}`,
         { available: !current }, // ✅ field name fixed
         {
           headers: {

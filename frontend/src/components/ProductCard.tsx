@@ -14,7 +14,7 @@ function ProductCard({products, setProducts} : {products: any, setProducts: any}
     
     
     useEffect(() => {
-        axios.get("http://localhost:3000/api/v1/listing/all", 
+        axios.get("https://locallink-lg2y.onrender.com/api/v1/listing/all", 
             {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token")}` 
@@ -35,7 +35,7 @@ function ProductCard({products, setProducts} : {products: any, setProducts: any}
     }
 
     async function handleChatButtonClick(productId: number){
-        const res = await axios.post("http://localhost:3000/api/v1/chat/start",
+        const res = await axios.post("https://locallink-lg2y.onrender.com/api/v1/chat/start",
             {
                 businessId: productId 
             },

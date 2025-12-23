@@ -7,7 +7,7 @@ function SearchFilter({setProducts} : {setProducts: any}) {
 
     const handleSearch = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
-        const response = await axios.get("http://localhost:3000/api/v1/listing/bulk", {
+        const response = await axios.get("hhttps://locallink-lg2y.onrender.com/api/v1/listing/bulk", {
         params: { category, location },
         headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`

@@ -20,7 +20,7 @@ function BusinessDashboard() {
   useEffect(() => {
     async function fetchProducts() {
       try {
-        const res = await axios.get("http://localhost:3000/api/v1/listing/mylistings", {
+        const res = await axios.get("https://locallink-lg2y.onrender.com/api/v1/listing/mylistings", {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },

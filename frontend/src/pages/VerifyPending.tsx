@@ -18,7 +18,7 @@ export default function VerifyPending({ email: initialEmail }: VerifyPendingProp
     if (!email) return alert("Please enter your email.");
     try {
       setLoading(true);
-      const res = await axios.post("http://localhost:3000/api/v1/user/resend-verification", { email });
+      const res = await axios.post("https://locallink-lg2y.onrender.com/api/v1/user/resend-verification", { email });
       setMessage(res.data.message);
     } catch (err: any) {
       setMessage(err.response?.data?.message || "Something went wrong");
