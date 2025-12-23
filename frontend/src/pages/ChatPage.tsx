@@ -4,9 +4,9 @@ import { connectSocket, getSocket } from "../socket";
 import axios from "axios";
 import AppBar from "../components/AppBar";
 import { useParams} from "react-router-dom";
+import { useRecoilState } from "recoil";
+import {  notificationMapState } from "../recoil/atoms";
 
-
-/* ================= TYPES ================= */
 
 export type User = {
   name: string;
@@ -31,26 +31,24 @@ export type Conversation = {
   messages: Message[];
 };
 
-/* ================= COMPONENT ================= */
-
+//COMPONENT
 export default function ChatPage() {
   const [conversations, setConversations] = useState<Conversation[]>([]);
-  const [activeConversation, setActiveConversation] =
-    useState<Conversation | null>(null);
+  const [activeConversation, setActiveConversation] = useState<Conversation | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [role, setRole] = useState("");
+  const [notificationMap, setNotificationMap] = useRecoilState(notificationMapState)
 
   const token = localStorage.getItem("token") || "";
   const userId = Number(localStorage.getItem("userId"));
-
   const {id} = useParams()
   const autoConvId = id ? Number(id) : null;
-  console.log("conversation Id: ", id)
+  
 
 
-  /* ================= CONNECT SOCKET + LOAD CONVERSATIONS ================= */
 
+  //CONNECT SOCKET + LOAD CONVERSATIONS 
   useEffect(() => {
     // 1️⃣ Connect socket ONCE
     connectSocket(token);
@@ -68,7 +66,7 @@ export default function ChatPage() {
         setConversations(convs);
         setRole(res.data.role);
 
-        // 🔥 AUTO SELECT CONVERSATION
+        // AUTO SELECT CONVERSATION
         if (autoConvId) {
           const found = convs.find(
             (c: Conversation) => c.id === autoConvId
@@ -90,26 +88,26 @@ export default function ChatPage() {
       });
   }, []);
 
-  /* ================= SOCKET RECEIVE (REALTIME) ================= */
-
+  //SOCKET RECEIVE (REALTIME) 
   useEffect(() => {
     const socket = getSocket();
     if (!socket) return;
 
     socket.on("new_message", (message: Message) => {
       // Only update if message belongs to open chat
+
       if (message.conversationId === activeConversation?.id) {
         setMessages((prev) => [...prev, message]);
+        
       }
     });
 
     return () => {
       socket.off("new_message");
     };
-  }, [activeConversation]);
+  }, []);
 
-  /* ================= LOAD MESSAGES ================= */
-
+ // LOAD MESSAGES
   const loadMessages = (conversationId: number) => {
     axios.get(`http://localhost:3000/api/v1/chat/${conversationId}/messages`, {
         headers: {
@@ -121,8 +119,7 @@ export default function ChatPage() {
       });
   };
 
-  /* ================= SELECT CONVERSATION ================= */
-
+  // SELECT CONVERSATION 
   const handleSelectConversation = (conv: Conversation) => {
     setActiveConversation(conv);
     loadMessages(conv.id);
@@ -130,10 +127,16 @@ export default function ChatPage() {
     // Join socket room
     const socket = getSocket();
     socket.emit("join_conversation", conv.id);
+
+    setNotificationMap((prev) => {
+    const copy = { ...prev };
+    delete copy[conv.id];
+    return copy;
+  });
+
   };
 
-  /* ================= SEND MESSAGE (SOCKET ONLY) ================= */
-
+  // SEND MESSAGE (SOCKET ONLY) 
   const sendMessage = () => {
     if (!activeConversation || newMessage.trim() === "") return;
 
@@ -165,16 +168,35 @@ export default function ChatPage() {
 
         <div className="flex-1 overflow-y-auto">
           {conversations.map((c) => (
-            <div key={c.id} onClick={() => handleSelectConversation(c)} className={`p-2.5 cursor-pointer border-b border-gray-300 ${
+            <div
+              key={c.id}
+              onClick={() => handleSelectConversation(c)}
+              className={`p-2.5 cursor-pointer border-b border-gray-300 flex justify-between items-center ${
                 activeConversation?.id === c.id ? "bg-gray-300" : "bg-[#F0F0F0]"
               }`}>
-              {role === "USER" ? c.business?.businessName : c.user?.name}
+              {/* LEFT: name + preview */}
+              <div className="flex flex-col">
+                <span className="font-medium">
+                  {role === "USER" ? c.business?.businessName : c.user?.name}
+                </span>
 
-              <br />
-              <small className="text-gray-500">
-                {c.messages[0]?.text || "No messages yet"}
-              </small>
+                <small className="text-gray-500 max-w-[200px] truncate">
+                  {c.messages[0]?.text || "No messages yet"}
+                </small>
+              </div>
+
+              {/* RIGHT: unread badge */}
+              {notificationMap[c.id] > 0 && (
+                <span className="min-w-[18px] h-[18px] px-1
+                  flex items-center justify-center
+                  text-[11px] font-semibold
+                  bg-red-600 text-white
+                  rounded-full">
+                  {notificationMap[c.id] > 9 ? "9+" : notificationMap[c.id]}
+                </span>
+              )}
             </div>
+
           ))}
         </div>
       </div>

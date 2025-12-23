@@ -20,3 +20,8 @@ export const imageUrl = atom({
     key: "imageUrl",
     default: ""
 })
+
+export const notificationMapState = atom<Record<number, number>>({
+  key: "notificationMapState",
+  default: {},
+});
