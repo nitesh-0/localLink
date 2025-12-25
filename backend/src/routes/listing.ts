@@ -18,7 +18,10 @@ router.post("/create", authMiddleware, upload.array("images") , async (req, res)
         ...req.body,
         price: parseFloat(req.body.price)
     }
-    const userId = req.userId || ""
+
+    if(!req.userId){
+        return res.status(401).json({ msg: "User not authenticated" });
+    }
 
     const isCorrectInput = productCreateZod.safeParse(body)
 
@@ -42,10 +45,10 @@ router.post("/create", authMiddleware, upload.array("images") , async (req, res)
         const newListing = await prisma.product.create({
             data: {
                 name: body.name,
-                price: parseFloat(body.price),
+                price: body.price,
                 caption: body.caption,
                 imageUrl: imageUrls,
-                userId: parseInt(userId)
+                userId: parseInt(req.userId)
             }
         })
 
@@ -80,12 +83,14 @@ router.get("/all", authMiddleware, async (req, res) => {
 
 router.get("/mylistings", authMiddleware, async (req, res) => {
 
-    const userId = req.userId || ""
+    if(!req.userId){
+        return res.status(401).json({ msg: "User not authenticated" });
+    }
 
     try {
         const mylistings = await prisma.product.findMany({
             where: {
-                userId: parseInt(userId)
+                userId: parseInt(req.userId)
             }
         })
 

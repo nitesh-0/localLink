@@ -28,7 +28,7 @@ function NewProduct(){
             setName(product.name);
             setPrice(product.price);
             setCaption(product.caption);
-            setExistingImages(product.imageUrl || []); // prefill old images
+            setExistingImages(product.imageUrl || []); //prefill old images
         }
     }, [product]);
 

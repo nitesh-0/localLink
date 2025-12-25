@@ -19,7 +19,9 @@ router.post("/create", middleware_1.authMiddleware, upload.array("images"), asyn
         ...req.body,
         price: parseFloat(req.body.price)
     };
-    const userId = req.userId || "";
+    if (!req.userId) {
+        return res.status(401).json({ msg: "User not authenticated" });
+    }
     const isCorrectInput = zod_1.productCreateZod.safeParse(body);
     if (!isCorrectInput.success) {
         res.json({
@@ -34,10 +36,10 @@ router.post("/create", middleware_1.authMiddleware, upload.array("images"), asyn
         const newListing = await prisma.product.create({
             data: {
                 name: body.name,
-                price: parseFloat(body.price),
+                price: body.price,
                 caption: body.caption,
                 imageUrl: imageUrls,
-                userId: parseInt(userId)
+                userId: parseInt(req.userId)
             }
         });
         res.json({

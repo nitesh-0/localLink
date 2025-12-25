@@ -4,10 +4,13 @@ export declare const userSignupZod: zod.ZodObject<{
     password: zod.ZodString;
     imageUrl: zod.ZodOptional<zod.ZodString>;
     location: zod.ZodOptional<zod.ZodString>;
+    category: zod.ZodOptional<zod.ZodString>;
+    role: zod.ZodEnum<{
+        USER: "USER";
+        BUSINESS: "BUSINESS";
+    }>;
     name: zod.ZodOptional<zod.ZodString>;
     businessName: zod.ZodOptional<zod.ZodString>;
-    category: zod.ZodOptional<zod.ZodString>;
-    role: zod.ZodString;
 }, zod.core.$strip>;
 export declare const userSigninZod: zod.ZodObject<{
     email: zod.ZodString;

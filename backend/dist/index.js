@@ -11,8 +11,16 @@ const socket_io_1 = require("socket.io");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const client_1 = require("@prisma/client");
 const config_1 = require("./config");
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
 const app = (0, express_1.default)();
-app.use((0, cors_1.default)());
+app.use((0, cors_1.default)({
+    origin: [
+        "http://localhost:5173", // local dev
+        "https://local-link.vercel.app" // production
+    ],
+    credentials: true,
+}));
 app.use(express_1.default.json());
 const prisma = new client_1.PrismaClient();
 const server = http_1.default.createServer(app); // Create HTTP server
@@ -27,8 +35,12 @@ app.get("/", (req, res) => {
 // ----------------------
 const io = new socket_io_1.Server(server, {
     cors: {
-        origin: "*",
+        origin: [
+            "http://localhost:5173",
+            "https://local-link.vercel.app"
+        ],
         methods: ["GET", "POST"],
+        credentials: true,
     },
 });
 // Map for online users
