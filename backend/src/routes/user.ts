@@ -26,6 +26,23 @@ function generateToken() {
 router.post("/create", upload.single("image"), async (req, res) => {
     const body = req.body
 
+    if (body.role === "USER" && !body.name) {
+        return res.status(400).json({ msg: "Name is required for USER signup" });
+    }
+
+    if (body.role === "BUSINESS" && !body.businessName) {
+        return res.status(400).json({ msg: "Business name is required for BUSINESS signup" });
+    }
+
+    if (body.role === "BUSINESS" && !body.location) {
+        return res.status(400).json({ msg: "Location is required for BUSINESS signup" });
+    }
+
+    if (body.role === "BUSINESS" && !body.category) {
+        return res.status(400).json({ msg: "Category is required for BUSINESS signup" });
+    }
+
+
     const isCorrectInput = userSignupZod.safeParse(body)
 
     if(!isCorrectInput.success){
@@ -44,7 +61,6 @@ router.post("/create", upload.single("image"), async (req, res) => {
             // req.file.buffer contains the binary data
             imageUrl = await uploadBufferToCloudinary(req.file.buffer, "localLink.AI");
         }
-
         
 
         const newUser = await prisma.user.create({
