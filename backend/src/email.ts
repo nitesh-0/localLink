@@ -13,7 +13,7 @@ export async function sendVerificationEmail(to: string, token: string) {
       Messages: [
         {
           From: {
-            Email: "yourgmail@gmail.com",
+            Email: "niteshsah760@gmail.com",
             Name: "LocalLink"
           },
           To: [{ Email: to }],
