@@ -1,27 +1,31 @@
-import nodemailer from "nodemailer";
+import Mailjet from 'node-mailjet';
 
-const transporter = nodemailer.createTransport({
-  host: "in-v3.mailjet.com",
-  port: 587,
-  auth: {
-    user: process.env.MJ_API_KEY_PUBLIC,
-    pass: process.env.MJ_API_KEY_PRIVATE,
-  }
-});
+const mailjet = Mailjet.apiConnect(
+  process.env.MJ_API_KEY_PUBLIC!,
+  process.env.MJ_API_KEY_PRIVATE!
+);
 
 export async function sendVerificationEmail(to: string, token: string) {
   const url = `${process.env.FRONTEND_URL}/verify?token=${token}&email=${to}`;
 
   try {
-    await transporter.sendMail({
-      from: `"LocalLink" <yourgmail@gmail.com>`, // verified sender email
-      to,
-      subject: "Verify Your Email",
-      html: `<a href="${url}">Verify Email</a>`
+    const request = mailjet.post("send", { version: 'v3.1' }).request({
+      Messages: [
+        {
+          From: {
+            Email: "yourgmail@gmail.com",
+            Name: "LocalLink"
+          },
+          To: [{ Email: to }],
+          Subject: "Verify Your Email",
+          HTMLPart: `<p>Click to verify: <a href="${url}">Verify Email</a></p>`
+        }
+      ]
     });
 
+    await request;
     console.log("Mail sent to:", to);
   } catch (err) {
-    console.error("Mailjet Error:", err);
+    console.error("Mailjet API Error:", err);
   }
 }
