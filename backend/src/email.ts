@@ -1,26 +1,27 @@
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const transporter = nodemailer.createTransport({
+  host: "in-v3.mailjet.com",
+  port: 587,
+  auth: {
+    user: process.env.MJ_API_KEY_PUBLIC,
+    pass: process.env.MJ_API_KEY_PRIVATE,
+  }
+});
 
 export async function sendVerificationEmail(to: string, token: string) {
-  console.log("email function called");
-
-  const verifyUrl = `${process.env.FRONTEND_URL}/verify?token=${token}&email=${to}`;
+  const url = `${process.env.FRONTEND_URL}/verify?token=${token}&email=${to}`;
 
   try {
-    const result = await resend.emails.send({
-      from: "LocalLink <onboarding@resend.dev>", // works without domain setup
+    await transporter.sendMail({
+      from: `"LocalLink" <yourgmail@gmail.com>`, // verified sender email
       to,
-      subject: "Verify your email",
-      html: `
-        <p>Hi,</p>
-        <p>Please verify your email:</p>
-        <p><a href="${verifyUrl}">Verify my email</a></p>
-      `,
+      subject: "Verify Your Email",
+      html: `<a href="${url}">Verify Email</a>`
     });
 
-    console.log("Email sent =>", result);
+    console.log("Mail sent to:", to);
   } catch (err) {
-    console.error("Email Send Failed =>", err);
+    console.error("Mailjet Error:", err);
   }
 }
