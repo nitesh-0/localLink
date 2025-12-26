@@ -1,39 +1,26 @@
-// utils/email.ts
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: 465,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-// simple send function
 export async function sendVerificationEmail(to: string, token: string) {
-    console.log("email function called")
-    console.log("frontend url: ", process.env.FRONTEND_URL)
+  console.log("email function called");
 
-    try {
-        const verifyUrl = `${process.env.FRONTEND_URL}/verify?token=${token}&email=${to}`;
-        const html = `
-            <p>Hi,</p>
-            <p>Click the link below to verify your email:</p>
-            <p><a href="${verifyUrl}">Verify my email</a></p>
-            <p>This link will expire in 24 hours.</p>
-        `;
-        await transporter.sendMail({
-            from: process.env.EMAIL_FROM,
-            to,
-            subject: "Verify your email",
-            html,
-        });
-    }
+  const verifyUrl = `${process.env.FRONTEND_URL}/verify?token=${token}&email=${to}`;
 
-    catch(e){
-        console.log(e)
-    }
+  try {
+    const result = await resend.emails.send({
+      from: "LocalLink <onboarding@resend.dev>", // works without domain setup
+      to,
+      subject: "Verify your email",
+      html: `
+        <p>Hi,</p>
+        <p>Please verify your email:</p>
+        <p><a href="${verifyUrl}">Verify my email</a></p>
+      `,
+    });
 
-  
+    console.log("Email sent =>", result);
+  } catch (err) {
+    console.error("Email Send Failed =>", err);
+  }
 }
