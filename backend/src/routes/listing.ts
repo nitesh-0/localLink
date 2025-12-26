@@ -65,6 +65,7 @@ router.post("/create", authMiddleware, upload.array("images") , async (req, res)
     }
 })
 
+
 router.get("/all", authMiddleware, async (req, res) => {
     const allProducts = await prisma.product.findMany({
         include:{
@@ -80,6 +81,7 @@ router.get("/all", authMiddleware, async (req, res) => {
         allProducts
     })
 })
+
 
 router.get("/mylistings", authMiddleware, async (req, res) => {
 
@@ -107,6 +109,7 @@ router.get("/mylistings", authMiddleware, async (req, res) => {
 
     
 })
+
 
 router.get("/me", authMiddleware, async (req, res) => {
 
@@ -138,6 +141,7 @@ router.get("/me", authMiddleware, async (req, res) => {
 
     
 })
+
 
 router.get("/bulk", authMiddleware, async (req, res) => {
     console.log("backend route hit")

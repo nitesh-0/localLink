@@ -35,4 +35,5 @@ function SearchFilter({setProducts} : {setProducts: any}) {
     );
 }
 
+
 export default SearchFilter;
