@@ -1,7 +1,7 @@
 
 // src/pages/Verify.tsx
 import { useEffect, useState } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useSearchParams, useNavigate,  } from "react-router-dom";
 import axios from "axios";
 
 export default function VerifyPage() {

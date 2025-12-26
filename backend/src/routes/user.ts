@@ -96,10 +96,11 @@ router.post("/create", upload.single("image"), async (req, res) => {
         });
 
         // send email
-        await sendVerificationEmail(body.email, email_token);
+        const response = await sendVerificationEmail(body.email, email_token);
 
         res.json({
             msg: "Registered-Check your email to verify",
+            response,
             token,
             newUser,
             created_token
