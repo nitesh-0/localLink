@@ -162,15 +162,20 @@ export default function ChatPage() {
   return (
   <div className="h-screen flex flex-col bg-[#F0F0F0]">
     {/* APP BAR */}
-    <div className="h-14 mb-6 shrink-0">
+    <div className="h-14 mb-2 shrink-0">
       <AppBar />
     </div>
 
     {/* MAIN CHAT SECTION */}
-    <div className="flex flex-1 overflow-hidden">
+    <div className="flex flex-1 overflow-hidden flex-col md:flex-row">
       
       {/* LEFT PANEL */}
-      <div className="w-[30%] border-r border-gray-300 flex flex-col">
+      <div className="
+        w-full md:w-[30%]
+        border-b md:border-b-0 md:border-r border-gray-300
+        flex flex-col
+        max-h-[40vh] md:max-h-full
+      ">
         <h3 className="p-2.5 text-md shrink-0">Chats</h3>
 
         <div className="flex-1 overflow-y-auto">
@@ -179,12 +184,16 @@ export default function ChatPage() {
               key={c.id}
               onClick={() => handleSelectConversation(c)}
               className={`p-2.5 cursor-pointer border-b border-gray-300 flex justify-between items-center ${
-                activeConversation?.id === c.id ? "bg-gray-300" : "bg-[#F0F0F0]"
-              }`}>
-              {/* LEFT: name + preview */}
+                activeConversation?.id === c.id
+                  ? "bg-gray-300"
+                  : "bg-[#F0F0F0]"
+              }`}
+            >
               <div className="flex flex-col">
                 <span className="font-medium">
-                  {role === "USER" ? c.business?.businessName : c.user?.name}
+                  {role === "USER"
+                    ? c.business?.businessName
+                    : c.user?.name}
                 </span>
 
                 <small className="text-gray-500 max-w-[200px] truncate">
@@ -192,39 +201,47 @@ export default function ChatPage() {
                 </small>
               </div>
 
-              {/* RIGHT: unread badge */}
               {notificationMap[c.id] > 0 && (
-                <span className="min-w-[18px] h-[18px] px-1
+                <span className="
+                  min-w-[18px] h-[18px] px-1
                   flex items-center justify-center
                   text-[11px] font-semibold
                   bg-red-600 text-white
-                  rounded-full">
+                  rounded-full
+                ">
                   {notificationMap[c.id] > 9 ? "9+" : notificationMap[c.id]}
                 </span>
               )}
             </div>
-
           ))}
         </div>
       </div>
 
       {/* RIGHT PANEL */}
-      <div className="w-[70%] p-2.5 flex flex-col">
+      <div className="w-full md:w-[70%] p-2.5 flex flex-col">
         {activeConversation ? (
           <>
-            {/* Messages  */}
-            <div className="flex-1 overflow-y-auto bg-[#90AB8B] rounded-md p-3 mb-2.5 flex flex-col gap-2">
+            {/* Messages */}
+            <div className="
+              flex-1 overflow-y-auto
+              bg-[#90AB8B] rounded-md
+              p-3 mb-2.5
+              flex flex-col gap-2
+            ">
               {messages.map((m, index) => {
                 const isSentByMe = m.sender.id === userId;
 
                 return (
                   <div
                     key={index}
-                    className={`max-w-[65%] px-3 py-2 rounded-lg text-sm ${
-                      isSentByMe
-                        ? "ml-auto bg-black text-white"
-                        : "mr-auto bg-white text-black border"
-                    }`}
+                    className={`max-w-[75%] md:max-w-[65%]
+                      px-3 py-2 rounded-lg text-sm
+                      ${
+                        isSentByMe
+                          ? "ml-auto bg-black text-white"
+                          : "mr-auto bg-white text-black border"
+                      }
+                    `}
                   >
                     {m.text}
                   </div>
@@ -232,8 +249,8 @@ export default function ChatPage() {
               })}
             </div>
 
-            {/* Input (always visible) */}
-            <div className="flex mb-5 gap-2.5 shrink-0">
+            {/* Input */}
+            <div className="flex gap-2.5 shrink-0">
               <input
                 type="text"
                 value={newMessage}
@@ -262,5 +279,6 @@ export default function ChatPage() {
     </div>
   </div>
 );
+
 
 }
