@@ -89,7 +89,7 @@ const Landing: React.FC = () => {
           <img
             src={webshopping}
             alt="Business collaboration"
-            className="rounded-xl w-full max-w-sm sm:max-w-md md:max-w-3xl object-cover"
+            className="rounded-xl w-full max-w-sm sm:max-w-md md:max-w-2xl object-cover"
           />
         </div>
       </main>
